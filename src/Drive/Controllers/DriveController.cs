@@ -11,6 +11,7 @@ namespace Drive.Controllers
     class DriveController
     {
         private DriveService _svc = null;
+        private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
         private bool CrearServicio()
         {
@@ -18,11 +19,12 @@ namespace Drive.Controllers
             {
                 _svc = Lib.DriveLibrary.CrearServicioComoCuentaUsuario();
                 _svc.HttpClient.Timeout = TimeSpan.FromMinutes(1);
-                Console.WriteLine("Se creó el servicio Drive");
+                _log.Debug("Se creó el servicio Drive");
                 return true;
             }
             catch (Exception ex)
             {
+                _log.Error(ex);
                 throw;
             }
         }
@@ -42,6 +44,7 @@ namespace Drive.Controllers
             }
             catch (Exception ex)
             {
+                _log.Error(ex);
                 throw;
             }
         }

@@ -10,6 +10,8 @@ namespace Drive.Lib
 {
     static class Archivos
     {
+        private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
+
         public static void UploadData(DriveService svc)
         {
             var fileMetadata = new File()
@@ -23,19 +25,20 @@ namespace Drive.Lib
                 request = svc.Files.Create(fileMetadata, stream, "image/jpeg");
                 request.Fields = "id";
                 var u = request.Upload();
-                Console.WriteLine(u.Exception);
+                //Console.WriteLine(u.Exception);
+                _log.Error(u.Exception);
                 //Console.WriteLine("Request:\n" + Newtonsoft.Json.JsonConvert.SerializeObject(request));
             }
             var file = request.ResponseBody;
             if (file == null)
-                Console.WriteLine("file es null");
+                _log.Debug("file es null");
             else if (file.Id == null)
             {
-                Console.WriteLine("file.id es null");
-                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(file));
+                _log.Debug("file.id es null");
+                _log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(file));
             }
             else
-                Console.WriteLine("File ID: " + file.Id);
+                _log.Debug("File ID: " + file.Id);
         }
 
         private static string DBFile
@@ -65,20 +68,20 @@ namespace Drive.Lib
                 var u = request.Upload();
                 if (u.Exception != null &&!String.IsNullOrEmpty(u.Exception.Message))
                 {
-                    Console.WriteLine(u.Exception);
+                    _log.Error(u.Exception);
                 }
                 //Console.WriteLine("Request:\n" + Newtonsoft.Json.JsonConvert.SerializeObject(request));
             }
             var file = request.ResponseBody;
             if (file == null)
-                Console.WriteLine("file es null");
+                _log.Debug("file es null");
             else if (file.Id == null)
             {
-                Console.WriteLine("file.id es null");
-                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(file));
+                _log.Debug("file.id es null");
+                _log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(file));
             }
             else
-                Console.WriteLine("File ID: " + file.Id);
+                _log.Debug("File ID: " + file.Id);
         }
 
 
@@ -102,14 +105,13 @@ namespace Drive.Lib
                 }
                 catch (Exception e)
                 {
-                    //MessageBox.Show(e.Message, "Error Occured");
-                    Console.WriteLine(e);
+                    _log.Error(e);
                 }
             }
             else
             {
                 //MessageBox.Show("The file does not exist.", "404");
-                Console.WriteLine("The file does not exist.");
+                _log.Error("The file does not exist.");
             }
 
             return null;
