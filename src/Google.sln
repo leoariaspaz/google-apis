@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29613.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Photos", "Photos\Photos.csproj", "{828EC85C-0F9C-4B8A-89D1-EDAB2BB7E115}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ListAPIs", "ListAPIs\ListAPIs.csproj", "{E880D916-B8DA-47D1-8B9F-FF2C09A41E4D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drive", "Drive\Drive.csproj", "{3BB1412E-F41C-4AFF-ACE5-49599FDD2DEE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinPhotos", "WinPhotos\WinPhotos.csproj", "{38DFFEF5-81F1-4A9F-B001-61ACFE6A9318}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{828EC85C-0F9C-4B8A-89D1-EDAB2BB7E115}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{828EC85C-0F9C-4B8A-89D1-EDAB2BB7E115}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{828EC85C-0F9C-4B8A-89D1-EDAB2BB7E115}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{828EC85C-0F9C-4B8A-89D1-EDAB2BB7E115}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E880D916-B8DA-47D1-8B9F-FF2C09A41E4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E880D916-B8DA-47D1-8B9F-FF2C09A41E4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E880D916-B8DA-47D1-8B9F-FF2C09A41E4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E880D916-B8DA-47D1-8B9F-FF2C09A41E4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BB1412E-F41C-4AFF-ACE5-49599FDD2DEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BB1412E-F41C-4AFF-ACE5-49599FDD2DEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BB1412E-F41C-4AFF-ACE5-49599FDD2DEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BB1412E-F41C-4AFF-ACE5-49599FDD2DEE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38DFFEF5-81F1-4A9F-B001-61ACFE6A9318}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38DFFEF5-81F1-4A9F-B001-61ACFE6A9318}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38DFFEF5-81F1-4A9F-B001-61ACFE6A9318}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38DFFEF5-81F1-4A9F-B001-61ACFE6A9318}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {27605276-DA53-4FEF-BC13-DF2E91043D35}
+	EndGlobalSection
+EndGlobal

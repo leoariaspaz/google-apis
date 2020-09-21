@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // La información general de un ensamblado se controla mediante el siguiente 
 // conjunto de atributos. Cambie estos valores de atributo para modificar la información
 // asociada con un ensamblado.
-[assembly: AssemblyTitle("Drive")]
+[assembly: AssemblyTitle("ListAPIs")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Hewlett-Packard Company")]
-[assembly: AssemblyProduct("Drive")]
+[assembly: AssemblyProduct("ListAPIs")]
 [assembly: AssemblyCopyright("Copyright © Hewlett-Packard Company 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // El siguiente GUID sirve como id. de typelib si este proyecto se expone a COM.
-[assembly: Guid("3bb1412e-f41c-4aff-ace5-49599fdd2dee")]
+[assembly: Guid("e880d916-b8da-47d1-8b9f-ff2c09a41e4d")]
 
 // La información de versión de un ensamblado consta de los cuatro valores siguientes:
 //

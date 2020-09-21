@@ -10,8 +10,6 @@ namespace Drive.Lib
 {
     static class Archivos
     {
-        private static readonly log4net.ILog _log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-
         public static void UploadData(DriveService svc)
         {
             var fileMetadata = new File()
@@ -25,31 +23,19 @@ namespace Drive.Lib
                 request = svc.Files.Create(fileMetadata, stream, "image/jpeg");
                 request.Fields = "id";
                 var u = request.Upload();
-                //Console.WriteLine(u.Exception);
-                _log.Error(u.Exception);
+                Console.WriteLine(u.Exception);
                 //Console.WriteLine("Request:\n" + Newtonsoft.Json.JsonConvert.SerializeObject(request));
             }
             var file = request.ResponseBody;
             if (file == null)
-                _log.Debug("file es null");
+                Console.WriteLine("file es null");
             else if (file.Id == null)
             {
-                _log.Debug("file.id es null");
-                _log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(file));
+                Console.WriteLine("file.id es null");
+                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(file));
             }
             else
-                _log.Debug("File ID: " + file.Id);
-        }
-
-        private static string DBFile
-        {
-            get
-            {
-                var s = System.IO.Path.GetDirectoryName(
-                            System.Reflection.Assembly.GetExecutingAssembly().Location) +
-                        @"\Files\SMPorres.7z";
-                return s;                
-            }
+                Console.WriteLine("File ID: " + file.Id);
         }
 
 
@@ -60,28 +46,25 @@ namespace Drive.Lib
                 Name = $"{DateTime.Now.ToString("yyyyMMddHHmmss")} - db.7z"
             };
             FilesResource.CreateMediaUpload request;
-            
-            using (var stream = new System.IO.FileStream(DBFile, System.IO.FileMode.Open))
+            using (var stream = new System.IO.FileStream(@"C:\Proyectos\Varios\Google\Drive\SMPorres.7z",
+                System.IO.FileMode.Open))
             {
                 request = svc.Files.Create(fileMetadata, stream, "application/x-7z-compressed");
                 request.Fields = "id";
                 var u = request.Upload();
-                if (u.Exception != null &&!String.IsNullOrEmpty(u.Exception.Message))
-                {
-                    _log.Error(u.Exception);
-                }
+                Console.WriteLine(u.Exception);
                 //Console.WriteLine("Request:\n" + Newtonsoft.Json.JsonConvert.SerializeObject(request));
             }
             var file = request.ResponseBody;
             if (file == null)
-                _log.Debug("file es null");
+                Console.WriteLine("file es null");
             else if (file.Id == null)
             {
-                _log.Debug("file.id es null");
-                _log.Debug(Newtonsoft.Json.JsonConvert.SerializeObject(file));
+                Console.WriteLine("file.id es null");
+                Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(file));
             }
             else
-                _log.Debug("File ID: " + file.Id);
+                Console.WriteLine("File ID: " + file.Id);
         }
 
 
@@ -105,13 +88,14 @@ namespace Drive.Lib
                 }
                 catch (Exception e)
                 {
-                    _log.Error(e);
+                    //MessageBox.Show(e.Message, "Error Occured");
+                    Console.WriteLine(e);
                 }
             }
             else
             {
                 //MessageBox.Show("The file does not exist.", "404");
-                _log.Error("The file does not exist.");
+                Console.WriteLine("The file does not exist.");
             }
 
             return null;

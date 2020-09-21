@@ -14,8 +14,6 @@ namespace Drive.Lib
         internal static DriveService CrearServicioComoCuentaUsuario()
         {
             UserCredential credential;
-
-            #region Login con archivo json
             //using (var stream = new FileStream("client_secrets.json", FileMode.Open, FileAccess.Read))
             //{
             //    credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
@@ -23,38 +21,79 @@ namespace Drive.Lib
             //        new[] { BooksService.Scope.Books },
             //        "user", CancellationToken.None, new FileDataStore("Books.ListMyLibrary"));
             //}
-            #endregion
 
             var secrets = new ClientSecrets
             {
-                ClientId = "1040777060117-bo0002q9hof8h6e43k5reo22aquj3cn7.apps.googleusercontent.com",
-                ClientSecret = "NCAVdbVz02ZbmKCb5MmtnsnY"
+                ClientId = "",
+                ClientSecret = ""
             };
 
             string[] scopes = new[] {
                         DriveService.Scope.Drive,
+                        //DriveService.Scope.DriveAppdata,
                         DriveService.Scope.DriveFile,
+                        //DriveService.Scope.DriveMetadata,
+                        //DriveService.Scope.DriveMetadataReadonly,
+                        //DriveService.Scope.DrivePhotosReadonly,
+                        //DriveService.Scope.DriveReadonly,
+                        //DriveService.Scope.DriveScripts
                 };
 
-            string usr = "admin"; //debe ser usuario admin
-            credential = GoogleWebAuthorizationBroker.AuthorizeAsync(secrets, scopes, usr,
+            //debe ser usuario admin
+            credential = GoogleWebAuthorizationBroker.AuthorizeAsync(secrets, scopes, 
+                "admin",
+                //Environment.UserName,
                 CancellationToken.None).Result;
+            //, new Google.Apis.Util.Store.FileDataStore("MyAppsToken"));
 
-            var init = new BaseClientService.Initializer() {
+            // Create the service.
+            var svc = new DriveService(new BaseClientService.Initializer()
+            {
                 HttpClientInitializer = credential,
-                ApplicationName = "SqlBackup"
-            };
-            var svc = new DriveService(init);
+                ApplicationName = "SqlBackup",
+            });
 
-            //Long Operations like file uploads might timeout. 10 is just precautionary value, can be 
-            //set to any reasonable value depending on what you use your service for.
+            //Long Operations like file uploads might timeout. 100 is just precautionary value, can be set to any reasonable value depending on what you use your service for.
             svc.HttpClient.Timeout = TimeSpan.FromMinutes(10);
 
             return svc;
         }
 
+        internal static async Task<DriveService> GetDriveService()
+        {
+            string[] scopes = new string[] { DriveService.Scope.Drive,
+                                             DriveService.Scope.DriveFile };
+            var clientId = "xxxxxx";      // From https://console.developers.google.com
+            var clientSecret = "xxxxxxx";          // From https://console.developers.google.com
+                                                   // here is where we Request the user to give us access, or use the Refresh Token that was previously stored in %AppData%
+            var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                new ClientSecrets
+                {
+                    ClientId = clientId,
+                    ClientSecret = clientSecret
+                },
+                scopes,
+                Environment.UserName,
+                CancellationToken.None,
+                new Google.Apis.Util.Store.FileDataStore("MyAppsToken"));
+            //Once consent is recieved, your token will be stored locally on the AppData directory, so that next time you wont be prompted for consent. 
+
+            DriveService service = new DriveService(new BaseClientService.Initializer()
+            {
+                HttpClientInitializer = credential,
+                ApplicationName = "MyAppName",
+            });
+            //Long Operations like file uploads might timeout. 100 is just precautionary value, can be set to any reasonable value depending on what you use your service for.
+            service.HttpClient.Timeout = TimeSpan.FromMinutes(100);
+
+            return service;
+        }
+
         internal static DriveService CrearServicioDriveComoCuentaServicio()
         {
+            //GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream("MyProject-1234.json"))
+            //    .createScoped(Collections.singleton(SQLAdminScopes.SQLSERVICE_ADMIN));
+
             var fs = new System.IO.FileStream(@"C:\Proyectos\Varios\Google\Drive\backup-de-base-de-datos-7a63bd05a0be.json",
                 System.IO.FileMode.Open);
             string[] scopes = new string[] { DriveService.Scope.Drive,
@@ -66,10 +105,9 @@ namespace Drive.Lib
                 HttpClientInitializer = credential,
                 ApplicationName = "MyAppName",
             });
-
-            //Long Operations like file uploads might timeout. 100 is just precautionary value, can be set to any reasonable value depending on what you use your service for.
             //service.HttpClient.Timeout = TimeSpan.FromMinutes(100);
 
+            //Long Operations like file uploads might timeout. 100 is just precautionary value, can be set to any reasonable value depending on what you use your service for.
             return service;
         }
     }
