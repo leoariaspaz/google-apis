@@ -106,5 +106,13 @@ namespace WinPhotos
             Log.Debug("Seleccionando una nueva imagen");
             _thread.Interrupt();
         }
+
+        private void btnSalirGoogle_Click(object sender, EventArgs e)
+        {
+            _changeWallpaperController.RequestStop();
+            PhotosLibrary.CerrarSesiónUsuarioGoogle();
+            MessageBox.Show("Se cerró la sesión del usuario.", "Cerrar sesión", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            btnSeleccionarÁlbumes.PerformClick();
+        }
     }
 }

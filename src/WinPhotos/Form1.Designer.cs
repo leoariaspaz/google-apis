@@ -33,6 +33,7 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnSeleccionarÁlbumes = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnSeleccionarNuevaImagen = new System.Windows.Forms.ToolStripMenuItem();
             this.btnReiniciarElProceso = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.salirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -42,7 +43,9 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.clbÁlbumes = new System.Windows.Forms.CheckedListBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
-            this.btnSeleccionarNuevaImagen = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnSalirGoogle = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.contextMenuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -63,34 +66,43 @@
             this.btnSeleccionarÁlbumes,
             this.btnSeleccionarNuevaImagen,
             this.btnReiniciarElProceso,
+            this.toolStripSeparator2,
+            this.btnSalirGoogle,
             this.toolStripSeparator1,
             this.salirToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(236, 98);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(242, 148);
             // 
             // btnSeleccionarÁlbumes
             // 
             this.btnSeleccionarÁlbumes.Name = "btnSeleccionarÁlbumes";
-            this.btnSeleccionarÁlbumes.Size = new System.Drawing.Size(235, 22);
+            this.btnSeleccionarÁlbumes.Size = new System.Drawing.Size(241, 22);
             this.btnSeleccionarÁlbumes.Text = "Seleccionar álbumes";
             this.btnSeleccionarÁlbumes.Click += new System.EventHandler(this.btnSeleccionarÁlbumes_Click);
+            // 
+            // btnSeleccionarNuevaImagen
+            // 
+            this.btnSeleccionarNuevaImagen.Name = "btnSeleccionarNuevaImagen";
+            this.btnSeleccionarNuevaImagen.Size = new System.Drawing.Size(241, 22);
+            this.btnSeleccionarNuevaImagen.Text = "Seleccionar una nueva imagen";
+            this.btnSeleccionarNuevaImagen.Click += new System.EventHandler(this.btnSeleccionarNuevaImagen_Click);
             // 
             // btnReiniciarElProceso
             // 
             this.btnReiniciarElProceso.Name = "btnReiniciarElProceso";
-            this.btnReiniciarElProceso.Size = new System.Drawing.Size(235, 22);
+            this.btnReiniciarElProceso.Size = new System.Drawing.Size(241, 22);
             this.btnReiniciarElProceso.Text = "Reiniciar el proceso";
             this.btnReiniciarElProceso.Click += new System.EventHandler(this.btnReiniciarElProceso_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(232, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(238, 6);
             // 
             // salirToolStripMenuItem
             // 
             this.salirToolStripMenuItem.Name = "salirToolStripMenuItem";
-            this.salirToolStripMenuItem.Size = new System.Drawing.Size(235, 22);
+            this.salirToolStripMenuItem.Size = new System.Drawing.Size(241, 22);
             this.salirToolStripMenuItem.Text = "Salir";
             this.salirToolStripMenuItem.Click += new System.EventHandler(this.salirToolStripMenuItem_Click);
             // 
@@ -146,12 +158,17 @@
             this.clbÁlbumes.Size = new System.Drawing.Size(439, 162);
             this.clbÁlbumes.TabIndex = 2;
             // 
-            // btnSeleccionarNuevaImagen
+            // btnSalirGoogle
             // 
-            this.btnSeleccionarNuevaImagen.Name = "btnSeleccionarNuevaImagen";
-            this.btnSeleccionarNuevaImagen.Size = new System.Drawing.Size(235, 22);
-            this.btnSeleccionarNuevaImagen.Text = "Seleccionar una nueva imagen";
-            this.btnSeleccionarNuevaImagen.Click += new System.EventHandler(this.btnSeleccionarNuevaImagen_Click);
+            this.btnSalirGoogle.Name = "btnSalirGoogle";
+            this.btnSalirGoogle.Size = new System.Drawing.Size(241, 22);
+            this.btnSalirGoogle.Text = "Cerrar sesión de usuario Google";
+            this.btnSalirGoogle.Click += new System.EventHandler(this.btnSalirGoogle_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(238, 6);
             // 
             // Form1
             // 
@@ -188,6 +205,9 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem btnSeleccionarNuevaImagen;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem btnSalirGoogle;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }
 

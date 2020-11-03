@@ -25,8 +25,10 @@ namespace WinPhotos.Lib
             credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                             new ClientSecrets
                             {
-                                ClientId = "",
-                                ClientSecret = ""
+                                //ClientId y ClientSecret deben ser IDs de cliente de OAuth 2.0
+                                //obtenidos desde https://console.developers.google.com/apis/credentials/
+                                ClientId = System.Configuration.ConfigurationManager.AppSettings["ClientId"],
+                                ClientSecret = System.Configuration.ConfigurationManager.AppSettings["ClientSecret"]
                             },
                             new[] {
                                 PhotosLibraryService.Scope.Photoslibrary,
@@ -45,7 +47,30 @@ namespace WinPhotos.Lib
                 HttpClientInitializer = credential,
                 ApplicationName = "Pruebas",
             });
+
             return svc;
+        }
+
+        internal static async void CerrarSesiónUsuarioGoogle()
+        {
+            var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+                            new ClientSecrets
+                            {
+                                //ClientId y ClientSecret deben ser IDs de cliente de OAuth 2.0
+                                //obtenidos desde https://console.developers.google.com/apis/credentials/
+                                ClientId = System.Configuration.ConfigurationManager.AppSettings["ClientId"],
+                                ClientSecret = System.Configuration.ConfigurationManager.AppSettings["ClientSecret"]
+                            },
+                            new[] {
+                                PhotosLibraryService.Scope.Photoslibrary,
+                                PhotosLibraryService.Scope.PhotoslibraryReadonly,
+                                PhotosLibraryService.Scope.PhotoslibraryReadonlyAppcreateddata
+                            },
+                            "user",
+                            CancellationToken.None
+                         );
+
+            await credential.RevokeTokenAsync(CancellationToken.None);
         }
     }
 }
