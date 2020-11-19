@@ -22,6 +22,7 @@ namespace WinPhotos.Lib
             //        "user", CancellationToken.None, new FileDataStore("Books.ListMyLibrary"));
             //}
 
+            //Google.Apis.Util.Store.FileDataStore.
             credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
                             new ClientSecrets
                             {
@@ -37,8 +38,8 @@ namespace WinPhotos.Lib
                             },
                             "user",
                             CancellationToken.None
-                         //,
-                         //new FileDataStore("Books.ListMyLibrary")
+                         ,
+                         new Google.Apis.Util.Store.FileDataStore("WinPhotos")
                          );
 
             // Create the service.
