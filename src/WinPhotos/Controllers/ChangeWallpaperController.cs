@@ -97,7 +97,7 @@ namespace WinPhotos.Controllers
             }
         }
 
-        public void CambiarFondoPantalla()
+        public async void CambiarFondoPantalla()
         {
             Log.Info("Inicia a cambiar fondo de pantalla");
             _stop = false;
@@ -105,7 +105,7 @@ namespace WinPhotos.Controllers
             while (!_stop)
             {
                 var sleepTime = int.Parse(System.Configuration.ConfigurationManager.AppSettings["SleepTime"]);
-                var chg = AsyncHelpers.RunSync(() => ChangeWallpaper(descargarFotos));
+                var chg = await ChangeWallpaper(descargarFotos);
                 descargarFotos = false;
                 try
                 {

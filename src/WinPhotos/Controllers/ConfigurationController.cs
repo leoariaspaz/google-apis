@@ -15,22 +15,19 @@ namespace WinPhotos.Controllers
 {
     class ConfigurationController
     {
-        public List<Album> ListarÁlbumes()
+        public async Task<List<Album>> ListarÁlbumes()
         {
             PhotosLibraryService _svc = null;
             var result = new List<Album>();
-            _svc = AsyncHelpers.RunSync(() => PhotosLibrary.CrearServicio());
+            _svc = await PhotosLibrary.CrearServicio();
             var albumsList = _svc.Albums.List();
-            var photos = AsyncHelpers.RunSync(() => albumsList.ExecuteAsync());
-            result.AddRange(photos.Albums.ToList());
-            var token = photos.NextPageToken;
-            while (!String.IsNullOrEmpty(token))
+            do
             {
-                albumsList.PageToken = token;
-                photos = AsyncHelpers.RunSync(() => albumsList.ExecuteAsync());
-                result.AddRange(photos.Albums.ToList());
-                token = photos.NextPageToken;
-            }
+                var photos = await albumsList.ExecuteAsync();
+                if (photos.Albums == null) break;
+                result.AddRange(photos.Albums);                
+                albumsList.PageToken = photos.NextPageToken;                
+            } while (!String.IsNullOrEmpty(albumsList.PageToken));
             return result;
         }
 

@@ -41,21 +41,16 @@ namespace WinPhotos
             _thread.Start();
         }
 
-        private void btnSeleccionarÁlbumes_Click(object sender, EventArgs e)
+        private async void btnSeleccionarÁlbumes_Click(object sender, EventArgs e)
         {
-            Show();
             var ctrlr = new ConfigurationController();
             clbÁlbumes.Items.Clear();
-            var alb = from a in ctrlr.ListarÁlbumes()
+            var alb = from a in await ctrlr.ListarÁlbumes()
                       where !String.IsNullOrEmpty(a.Title)
                       orderby a.Title
                       select new Álbum(a.Id, a.Title);
             clbÁlbumes.Items.AddRange(alb.ToArray());
             var ids = ctrlr.GetÁlbumesId();
-            if (!ids.Any())
-            {
-                return;
-            }
             for (int i = 0; i < clbÁlbumes.Items.Count; i++)
             {
                 var item = (Álbum)clbÁlbumes.Items[i];
@@ -64,6 +59,8 @@ namespace WinPhotos
                     clbÁlbumes.SetItemChecked(i, true);
                 }
             }
+            Show();
+            ShowInTaskbar = true;
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)

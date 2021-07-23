@@ -13,12 +13,9 @@ namespace WinPhotos.Lib.Settings
 
         static AppSettings()
         {
-            _fileName = AppDomain.CurrentDomain.BaseDirectory + //"Settings.xml";
+            _fileName = AppDomain.CurrentDomain.BaseDirectory + 
                             System.Diagnostics.Process.GetCurrentProcess().ProcessName + ".xml";
-            //FileName = AppDomain.CurrentDomain.BaseDirectory + "settings.xml";
         }
-
-        //public static string FileName { get { return _fileName; } set { _fileName = value; } }
 
         /// <summary>
         /// La ruta del archivo de configuración.
