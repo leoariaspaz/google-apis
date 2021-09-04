@@ -17,8 +17,9 @@ namespace WinPhotos
     public partial class Form1 : Form
     {
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        private Thread _thread;
+        //private Thread _thread;
         private ChangeWallpaperController _changeWallpaperController;
+        private List<string> _idFotos;
 
         public Form1()
         {
@@ -31,14 +32,27 @@ namespace WinPhotos
             Application.Exit();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
             ShowInTaskbar = false;
             Hide();
-            Visible = false;
-            _changeWallpaperController = new ChangeWallpaperController();
-            _thread = new Thread(new ThreadStart(_changeWallpaperController.CambiarFondoPantalla));
-            _thread.Start();
+            (bool descarga, List<String> ids) = await new ChangeWallpaperController().DescargarListaFotos();
+            if (descarga) _idFotos = ids;
+            RotarFondosPantalla();
+
+            //Visible = false;
+            //_changeWallpaperController = new ChangeWallpaperController();
+            //_thread = new Thread(new ThreadStart(_changeWallpaperController.CambiarFondoPantalla));
+            //_thread.Start();
+        }
+
+        private async void RotarFondosPantalla()
+        {
+            while (true)
+            {
+                await Task.Run(async () => await new ChangeWallpaperController().ChangeWallpaper(_idFotos));
+                await Task.Delay(TimeSpan.FromSeconds(15));
+            }
         }
 
         private async void btnSeleccionarÁlbumes_Click(object sender, EventArgs e)
@@ -85,23 +99,23 @@ namespace WinPhotos
         private void btnReiniciarElProceso_Click(object sender, EventArgs e)
         {
             _changeWallpaperController.RequestStop();
-            _thread.Interrupt();
-            _thread.Join();
-            _thread = new Thread(new ThreadStart(_changeWallpaperController.CambiarFondoPantalla));
-            _thread.Start();
+            //_thread.Interrupt();
+            //_thread.Join();
+            //_thread = new Thread(new ThreadStart(_changeWallpaperController.CambiarFondoPantalla));
+            //_thread.Start();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            _changeWallpaperController.RequestStop();
-            _thread.Interrupt();
-            _thread.Join();
+            //_changeWallpaperController.RequestStop();
+            //_thread.Interrupt();
+            //_thread.Join();
         }
 
         private void btnSeleccionarNuevaImagen_Click(object sender, EventArgs e)
         {
             Log.Debug("Seleccionando una nueva imagen");
-            _thread.Interrupt();
+            //_thread.Interrupt();
         }
 
         private void btnSalirGoogle_Click(object sender, EventArgs e)

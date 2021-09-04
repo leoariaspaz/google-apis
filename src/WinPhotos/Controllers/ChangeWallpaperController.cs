@@ -136,10 +136,11 @@ namespace WinPhotos.Controllers
             bool result = false;
             try
             {
-                if (descargarFotos)
-                {
-                    if (!await DescargarListaFotos()) return false;
-                }
+                //if (descargarFotos)
+                //{
+                //    if (!await DescargarListaFotos()) return false;
+                //}
+
                 var id = new Random().Next(0, _idFotos.Count - 1);
                 var path = await GrabarImagenProporcional(_idFotos.ElementAt(id), ImageFormat.Bmp);
                 Wallpaper.SetBackground(path, Wallpaper.Style.Stretched);
@@ -169,33 +170,56 @@ namespace WinPhotos.Controllers
             return result;
         }
 
-        private async Task<bool> DescargarListaFotos()
+        internal async Task<bool> ChangeWallpaper(List<String> fotos)
         {
-            if (_idFotos == null)
+            bool result = false;
+            try
             {
-                _idFotos = new List<string>();
+                var id = new Random().Next(0, fotos.Count - 1);
+                var path = await GrabarImagenProporcional(fotos.ElementAt(id), ImageFormat.Bmp);
+                Wallpaper.SetBackground(path, Wallpaper.Style.Stretched);
+                Log.Debug("Se estableció el fondo de pantalla.");
+                result = true;
             }
-            else
+            catch(Exception ex)
             {
-                _idFotos.Clear();
+                if (ex is AggregateException)
+                {
+                    foreach (var e in (ex as AggregateException).InnerExceptions)
+                        Log.Error(e);
+                }
+                else 
+                {
+                    Log.Error(ex);
+                    if (ex.InnerException != null) Log.Error(ex.InnerException);
+                }
             }
+            return result;
+        }
+
+        public async Task<(bool, List<string>)> DescargarListaFotos()
+        {
+            //_idFotos = _idFotos == null ? new List<string>() : _idFotos;
+            //_idFotos.Clear();
+
             MySettings settings = MySettings.Load();
             if (settings.Albums == null || settings.Albums.Count == 0)
             {
                 Log.Info("La lista de álbumes elegidos está vacía.");
-                return false;
+                return (false, null);
             }
             else
             {
                 Log.InfoFormat("Cargando fotos de {0} álbumes", settings.Albums.Count);
+                var ids = new List<string>();
+                foreach (var item in settings.Albums)
+                {
+                    var body = new SearchMediaItemsRequest { AlbumId = item, PageSize = 100 };
+                    ids.AddRange(await CargarFotos(body));
+                }
+                Log.DebugFormat("Se cargaron {0} fotos de {1} álbums", ids.Count, settings.Albums.Count);
+                return (true, ids);
             }
-            foreach (var item in settings.Albums)
-            {
-                var body = new SearchMediaItemsRequest { AlbumId = item, PageSize = 100 };
-                _idFotos.AddRange(await CargarFotos(body));
-            }
-            Log.DebugFormat("Se cargaron {0} fotos de {1} álbums", _idFotos.Count, settings.Albums.Count);
-            return true;
         }
 
         private async Task<string> GrabarImagenProporcional(string idPhoto, ImageFormat format)
@@ -262,6 +286,8 @@ namespace WinPhotos.Controllers
         private async Task<List<string>> CargarFotos(SearchMediaItemsRequest body)
         {
             int pág = 1;
+            var a = await _svc.Albums.Get(body.AlbumId).ExecuteAsync();
+            Log.Debug($"Cargando fotos del álbum \"{a.Title}\"");
             var response = await _svc.MediaItems.Search(body).ExecuteAsync();
             var photos = response.MediaItems.Where(m => m.MediaMetadata.Photo != null);
             List<string> ids = new List<string>();
