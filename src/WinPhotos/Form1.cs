@@ -17,13 +17,9 @@ namespace WinPhotos
     public partial class Form1 : Form
     {
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
-        //private Thread _thread;
-        private ChangeWallpaperController _changeWallpaperController;
         private List<string> _idFotos;
-        private bool _salir = false;
         private CancellationTokenSource _cancellationTokenSource;
         private CancellationTokenSource _globalToken = new CancellationTokenSource();
-
 
         public Form1()
         {
@@ -36,14 +32,19 @@ namespace WinPhotos
             Application.Exit();
         }
 
-        private async void Form1_Load(object sender, EventArgs e)
+        private void Form1_Load(object sender, EventArgs e)
         {
             ShowInTaskbar = false;
             Hide();
+            Procesar();
+        }
+
+        private async Task Procesar()
+        {
             (bool descarga, List<String> ids) = await new ChangeWallpaperController().DescargarListaFotos();
             if (descarga) _idFotos = ids;
 
-            CrearNuevoToken();
+            CrearNuevoTokenDeRotacion();
             Task.Run(async () => { await RotarFondosPantalla(); }, _globalToken.Token);
         }
 
@@ -62,7 +63,7 @@ namespace WinPhotos
 
                     if (tkn.IsCancellationRequested)
                     {
-                        tkn = CrearNuevoToken();
+                        tkn = CrearNuevoTokenDeRotacion();
                     }
 
                     await Task.Delay(
@@ -73,12 +74,12 @@ namespace WinPhotos
                 catch (TaskCanceledException)
                 {
                     Log.Debug("Tarea cancelada.");
-                    CrearNuevoToken();
+                    CrearNuevoTokenDeRotacion();
                 }
             }
         }
 
-        private CancellationToken CrearNuevoToken()
+        private CancellationToken CrearNuevoTokenDeRotacion()
         {
             CancellationToken tkn;
             if (_cancellationTokenSource != null)
@@ -112,7 +113,6 @@ namespace WinPhotos
 
         private void btnCancelar_Click(object sender, EventArgs e)
         {
-            //Close();
             Hide();
         }
 
@@ -124,26 +124,12 @@ namespace WinPhotos
                 tmp.Add((Álbum)item);
             }
             new ConfigurationController().ActualizarÁlbumes(tmp);
-            //Close();
             Hide();
-            btnReiniciarElProceso.PerformClick();
-        }
-
-        private void btnReiniciarElProceso_Click(object sender, EventArgs e)
-        {
-            _changeWallpaperController.RequestStop();
-            //_thread.Interrupt();
-            //_thread.Join();
-            //_thread = new Thread(new ThreadStart(_changeWallpaperController.CambiarFondoPantalla));
-            //_thread.Start();
+            btnRecargarAlbumes.PerformClick();
         }
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            //_changeWallpaperController.RequestStop();
-            //_thread.Interrupt();
-            //_thread.Join();
-
             _globalToken.Cancel();
         }
 
@@ -155,10 +141,17 @@ namespace WinPhotos
 
         private void btnSalirGoogle_Click(object sender, EventArgs e)
         {
-            _changeWallpaperController.RequestStop();
+            _globalToken.Cancel();
             PhotosLibrary.CerrarSesiónUsuarioGoogle();
             MessageBox.Show("Se cerró la sesión del usuario.", "Cerrar sesión", MessageBoxButtons.OK, MessageBoxIcon.Information);
             btnSeleccionarÁlbumes.PerformClick();
+        }
+
+        private async void btnRecargarAlbumes_Click(object sender, EventArgs e)
+        {
+            _globalToken.Cancel();
+            _idFotos.Clear();
+            Procesar();
         }
     }
 }

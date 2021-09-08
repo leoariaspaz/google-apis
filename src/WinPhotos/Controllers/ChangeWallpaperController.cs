@@ -212,11 +212,12 @@ namespace WinPhotos.Controllers
             {
                 Log.InfoFormat("Cargando fotos de {0} álbumes", settings.Albums.Count);
                 var ids = new List<string>();
-                foreach (var item in settings.Albums)
-                {
-                    var body = new SearchMediaItemsRequest { AlbumId = item, PageSize = 100 };
-                    ids.AddRange(await CargarFotos(body));
-                }
+                Parallel.ForEach(settings.Albums,
+                    async album =>
+                    {
+                        var body = new SearchMediaItemsRequest { AlbumId = album, PageSize = 100 };
+                        ids.AddRange(await CargarFotos(body));
+                    });
                 Log.DebugFormat("Se cargaron {0} fotos de {1} álbums", ids.Count, settings.Albums.Count);
                 return (true, ids);
             }
