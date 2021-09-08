@@ -20,6 +20,10 @@ namespace WinPhotos
         //private Thread _thread;
         private ChangeWallpaperController _changeWallpaperController;
         private List<string> _idFotos;
+        private bool _salir = false;
+        private CancellationTokenSource _cancellationTokenSource;
+        private CancellationTokenSource _globalToken = new CancellationTokenSource();
+
 
         public Form1()
         {
@@ -38,21 +42,50 @@ namespace WinPhotos
             Hide();
             (bool descarga, List<String> ids) = await new ChangeWallpaperController().DescargarListaFotos();
             if (descarga) _idFotos = ids;
-            RotarFondosPantalla();
 
-            //Visible = false;
-            //_changeWallpaperController = new ChangeWallpaperController();
-            //_thread = new Thread(new ThreadStart(_changeWallpaperController.CambiarFondoPantalla));
-            //_thread.Start();
+            CrearNuevoToken();
+            Task.Run(async () => { await RotarFondosPantalla(); }, _globalToken.Token);
         }
 
-        private async void RotarFondosPantalla()
+        private async Task RotarFondosPantalla()
         {
             while (true)
             {
-                await Task.Run(async () => await new ChangeWallpaperController().ChangeWallpaper(_idFotos));
-                await Task.Delay(TimeSpan.FromSeconds(15));
+                try
+                {
+                    var tkn = _cancellationTokenSource.Token;
+
+                    await Task.Run(
+                        async () => { await new ChangeWallpaperController().ChangeWallpaper(_idFotos); },
+                        tkn
+                    );
+
+                    if (tkn.IsCancellationRequested)
+                    {
+                        tkn = CrearNuevoToken();
+                    }
+
+                    await Task.Delay(
+                        TimeSpan.FromSeconds(15),
+                        tkn
+                    );
+                }
+                catch (TaskCanceledException)
+                {
+                    Log.Debug("Tarea cancelada.");
+                    CrearNuevoToken();
+                }
             }
+        }
+
+        private CancellationToken CrearNuevoToken()
+        {
+            CancellationToken tkn;
+            if (_cancellationTokenSource != null)
+                _cancellationTokenSource.Dispose();
+            _cancellationTokenSource = new CancellationTokenSource();
+            tkn = _cancellationTokenSource.Token;
+            return tkn;
         }
 
         private async void btnSeleccionarÁlbumes_Click(object sender, EventArgs e)
@@ -110,12 +143,14 @@ namespace WinPhotos
             //_changeWallpaperController.RequestStop();
             //_thread.Interrupt();
             //_thread.Join();
+
+            _globalToken.Cancel();
         }
 
         private void btnSeleccionarNuevaImagen_Click(object sender, EventArgs e)
         {
             Log.Debug("Seleccionando una nueva imagen");
-            //_thread.Interrupt();
+            _cancellationTokenSource.Cancel();
         }
 
         private void btnSalirGoogle_Click(object sender, EventArgs e)
