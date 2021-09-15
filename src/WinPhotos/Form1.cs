@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -32,16 +33,17 @@ namespace WinPhotos
             Application.Exit();
         }
 
-        private void Form1_Load(object sender, EventArgs e)
+        private async void Form1_Load(object sender, EventArgs e)
         {
             ShowInTaskbar = false;
             Hide();
+            await new PhotosProxy().CrearServicio();
             Procesar();
         }
 
-        private void Procesar()
+        private async void Procesar()
         {
-            (bool descarga, List<String> ids) = new ChangeWallpaperController().DescargarListaFotos();
+            (bool descarga, List<String> ids) = await new ChangeWallpaperController().DescargarListaFotos();
             if (descarga) _idFotos = ids;
 
             CrearNuevoTokenDeRotacion();
@@ -50,6 +52,7 @@ namespace WinPhotos
 
         private async Task RotarFondosPantalla()
         {
+            var sleepTime = Convert.ToInt32(ConfigurationManager.AppSettings["SleepTime"]);
             while (true)
             {
                 try
@@ -67,7 +70,7 @@ namespace WinPhotos
                     }
 
                     await Task.Delay(
-                        TimeSpan.FromSeconds(15),
+                        TimeSpan.FromMinutes(sleepTime),
                         tkn
                     );
                 }
@@ -92,7 +95,7 @@ namespace WinPhotos
         private async void BtnSeleccionarÁlbumes_Click(object sender, EventArgs e)
         {
             var ctrlr = new ConfigurationController();
-            var alb = from a in await ctrlr.ListarÁlbumes()
+            var alb = from a in await new PhotosProxy().ListarÁlbumes()
                       where !String.IsNullOrEmpty(a.Title)
                       orderby a.Title
                       select new ÁlbumViewModel(a.Id, a.Title);
@@ -143,7 +146,7 @@ namespace WinPhotos
         private void BtnSalirGoogle_Click(object sender, EventArgs e)
         {
             _globalToken.Cancel();
-            PhotosProxy.CerrarSesiónUsuarioGoogle();
+            new PhotosProxy().CerrarSesiónUsuarioGoogle();
             MessageBox.Show("Se cerró la sesión del usuario.", "Cerrar sesión", MessageBoxButtons.OK, MessageBoxIcon.Information);
             btnSeleccionarÁlbumes.PerformClick();
         }

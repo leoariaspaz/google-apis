@@ -9,6 +9,13 @@ using System.Threading.Tasks;
 
 namespace WinPhotos.Lib
 {
+    public enum WallpaperStyle
+    {
+        Tiled,
+        Centered,
+        Stretched
+    }
+
     public sealed class WallpaperService
     {
         const int SPI_SETDESKWALLPAPER = 20;
@@ -19,18 +26,12 @@ namespace WinPhotos.Lib
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA2101:Specify marshaling for P/Invoke string arguments", Justification = "<pendiente>")]
         static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 
-        public enum Style
-        {
-            Tiled,
-            Centered,
-            Stretched
-        }
 
-        public static void SetBackground(string path, Style style)
+        public static void SetBackground(string path, WallpaperStyle style)
         {
             RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Control Panel\Desktop", true);
-            key.SetValue(@"WallpaperStyle", style == Style.Stretched ? "2" : "1");
-            key.SetValue(@"TileWallpaper", style == Style.Tiled ? "1" : "0");
+            key.SetValue(@"WallpaperStyle", style == WallpaperStyle.Stretched ? "2" : "1");
+            key.SetValue(@"TileWallpaper", style == WallpaperStyle.Tiled ? "1" : "0");
 
             SystemParametersInfo(SPI_SETDESKWALLPAPER, 0, path, SPIF_UPDATEINIFILE | SPIF_SENDWININICHANGE);
         }

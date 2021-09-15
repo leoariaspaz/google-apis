@@ -23,8 +23,11 @@ namespace WinPhotos.Controllers
             try
             {
                 var id = new Random().Next(0, fotos.Count - 1);
-                var path = await GrabarImagenProporcional(fotos.ElementAt(id), ImageFormat.Bmp);
-                WallpaperService.SetBackground(path, WallpaperService.Style.Stretched);
+                var (img, url) = await new PhotosProxy().DescargarImagen(fotos.ElementAt(id));
+                Log.Debug("Se descargó " + url);
+                string filename = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
+                new GraphicsService().SaveScreenProportionalImage(img, filename, ImageFormat.Bmp);
+                WallpaperService.SetBackground(filename, WallpaperStyle.Stretched);
                 Log.Debug("Se estableció el fondo de pantalla.");
                 result = true;
             }
@@ -44,7 +47,7 @@ namespace WinPhotos.Controllers
             return result;
         }
 
-        public (bool, List<string>) DescargarListaFotos()
+        public async Task<(bool, List<string>)> DescargarListaFotos()
         {
             MySettings settings = MySettings.Load();
             if (settings.Albums == null || settings.Albums.Count == 0)
@@ -56,61 +59,20 @@ namespace WinPhotos.Controllers
             {
                 Log.InfoFormat("Cargando fotos de {0} álbumes", settings.Albums.Count);
                 var ids = new List<string>();
-                _ = Parallel.ForEach(settings.Albums,
-                    async album =>
-                    {
-                        var body = new SearchMediaItemsRequest { AlbumId = album, PageSize = 100 };
-                        ids.AddRange(await CargarFotos(body));
-                    });
+                var svc = new PhotosProxy();
+                var tasks = settings.Albums.Select(async album => await DescargarAlbum(album, ids, svc));
+                await Task.WhenAll(tasks);
+                //Parallel.ForEach(settings.Albums, async (album) => await DescargarAlbum(album, ids, svc));
                 Log.DebugFormat("Se cargaron {0} fotos de {1} álbums", ids.Count, settings.Albums.Count);
                 return (true, ids);
             }
         }
 
-        private async Task<string> GrabarImagenProporcional(string idPhoto, ImageFormat format)
+        private async Task DescargarAlbum(string album, List<string> ids, PhotosProxy svc)
         {
-            var w = Screen.PrimaryScreen.Bounds.Width;
-            var h = Screen.PrimaryScreen.Bounds.Height;
-            var svc = await PhotosProxy.CrearServicio();
-            var item = await svc.MediaItems.Get(idPhoto).ExecuteAsync();
-            string filename = Path.Combine(Path.GetTempPath(), "wallpaper.bmp");
-            using (WebClient webClient = new WebClient())
-            {
-                byte[] data = webClient.DownloadData(item.BaseUrl + "=d");
-                using (MemoryStream mem = new MemoryStream(data))
-                {
-                    using (var yourImage = Image.FromStream(mem))
-                    {
-                        using (var newImage = new GraphicsService().ScaleImage(yourImage, w, h))
-                        {
-                            newImage.Save(filename, format);
-                            Log.DebugFormat("Se grabó la imagen {0} como {1}", item.ProductUrl, filename);
-                        }
-                    }
-                }
-            }
-            return filename;
-        }
-
-        private async Task<List<string>> CargarFotos(SearchMediaItemsRequest body)
-        {
-            int pág = 1;
-            var svc = await PhotosProxy.CrearServicio();
-            var a = await svc.Albums.Get(body.AlbumId).ExecuteAsync();
-            Log.Debug($"Cargando fotos del álbum \"{a.Title}\"");
-            var response = await svc.MediaItems.Search(body).ExecuteAsync();
-            var photos = response.MediaItems.Where(m => m.MediaMetadata.Photo != null);
-            List<string> ids = new List<string>();
-            ids.AddRange(photos.Select(m => m.Id));
-            while (response != null || response.NextPageToken == null)
-            {
-                body.PageToken = response.NextPageToken;
-                response = await svc.MediaItems.Search(body).ExecuteAsync();
-                photos = response.MediaItems.Where(m => m.MediaMetadata.Photo != null);
-                ids.AddRange(photos.Select(m => m.Id));
-                pág++;
-            }
-            return ids;
+            Log.Debug($"Cargando fotos del álbum \"{await svc.ObtenerTituloAlbum(album)}\"");
+            var body = new SearchMediaItemsRequest { AlbumId = album, PageSize = 100 };
+            ids.AddRange(await svc.CargarFotos(body));
         }
     }
 }

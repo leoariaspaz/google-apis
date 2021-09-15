@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Windows.Forms;
 
 namespace WinPhotos.Lib
 {
@@ -35,6 +38,22 @@ namespace WinPhotos.Lib
                 }
             }
             return newImage;
+        }
+
+        public void SaveScreenProportionalImage(byte[] data, string fileName, ImageFormat format)
+        {
+            var w = Screen.PrimaryScreen.Bounds.Width;
+            var h = Screen.PrimaryScreen.Bounds.Height;
+            using (var stream = new MemoryStream(data))
+            {
+                using (var img = Image.FromStream(stream))
+                {
+                    using (var newImage = new GraphicsService().ScaleImage(img, w, h))
+                    {
+                        newImage.Save(fileName, format);
+                    }
+                }
+            }
         }
     }
 }
