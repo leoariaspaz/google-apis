@@ -79,21 +79,21 @@
             this.btnSeleccionarÁlbumes.Name = "btnSeleccionarÁlbumes";
             this.btnSeleccionarÁlbumes.Size = new System.Drawing.Size(338, 32);
             this.btnSeleccionarÁlbumes.Text = "Seleccionar álbumes";
-            this.btnSeleccionarÁlbumes.Click += new System.EventHandler(this.btnSeleccionarÁlbumes_Click);
+            this.btnSeleccionarÁlbumes.Click += new System.EventHandler(this.BtnSeleccionarÁlbumes_Click);
             // 
             // btnSeleccionarNuevaImagen
             // 
             this.btnSeleccionarNuevaImagen.Name = "btnSeleccionarNuevaImagen";
             this.btnSeleccionarNuevaImagen.Size = new System.Drawing.Size(338, 32);
             this.btnSeleccionarNuevaImagen.Text = "Seleccionar una nueva imagen";
-            this.btnSeleccionarNuevaImagen.Click += new System.EventHandler(this.btnSeleccionarNuevaImagen_Click);
+            this.btnSeleccionarNuevaImagen.Click += new System.EventHandler(this.BtnSeleccionarNuevaImagen_Click);
             // 
             // btnRecargarAlbumes
             // 
             this.btnRecargarAlbumes.Name = "btnRecargarAlbumes";
             this.btnRecargarAlbumes.Size = new System.Drawing.Size(338, 32);
             this.btnRecargarAlbumes.Text = "Cargar nuevamente los álbumes";
-            this.btnRecargarAlbumes.Click += new System.EventHandler(this.btnRecargarAlbumes_Click);
+            this.btnRecargarAlbumes.Click += new System.EventHandler(this.BtnRecargarAlbumes_Click);
             // 
             // toolStripSeparator2
             // 
@@ -105,7 +105,7 @@
             this.btnSalirGoogle.Name = "btnSalirGoogle";
             this.btnSalirGoogle.Size = new System.Drawing.Size(338, 32);
             this.btnSalirGoogle.Text = "Cerrar sesión de usuario Google";
-            this.btnSalirGoogle.Click += new System.EventHandler(this.btnSalirGoogle_Click);
+            this.btnSalirGoogle.Click += new System.EventHandler(this.BtnSalirGoogle_Click);
             // 
             // toolStripSeparator1
             // 
@@ -117,7 +117,7 @@
             this.salirToolStripMenuItem.Name = "salirToolStripMenuItem";
             this.salirToolStripMenuItem.Size = new System.Drawing.Size(338, 32);
             this.salirToolStripMenuItem.Text = "Salir";
-            this.salirToolStripMenuItem.Click += new System.EventHandler(this.salirToolStripMenuItem_Click);
+            this.salirToolStripMenuItem.Click += new System.EventHandler(this.SalirToolStripMenuItem_Click);
             // 
             // panel1
             // 
@@ -152,7 +152,7 @@
             this.btnCancelar.TabIndex = 1;
             this.btnCancelar.Text = "Cancelar";
             this.btnCancelar.UseVisualStyleBackColor = true;
-            this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
+            this.btnCancelar.Click += new System.EventHandler(this.BtnCancelar_Click);
             // 
             // panel2
             // 

@@ -1,6 +1,6 @@
 ﻿namespace WinPhotos.Models
 {
-    public class Álbum
+    public class ÁlbumViewModel
     {
         public string Id { get; set; }
 
@@ -11,7 +11,7 @@
             return Nombre;
         }
 
-        public Álbum(string id, string nombre)
+        public ÁlbumViewModel(string id, string nombre)
         {
             Id = id;
             Nombre = nombre ?? "";

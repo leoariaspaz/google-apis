@@ -114,11 +114,11 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
-    <Compile Include="Lib\AsyncHelpers.cs" />
-    <Compile Include="Lib\PhotosLibrary.cs" />
+    <Compile Include="Lib\GraphicsService.cs" />
+    <Compile Include="Lib\PhotosProxy.cs" />
     <Compile Include="Lib\Settings\AppSettings.cs" />
     <Compile Include="Lib\Settings\MySettings.cs" />
-    <Compile Include="Lib\Wallpaper.cs" />
+    <Compile Include="Lib\WallpaperService.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\Álbum.cs" />

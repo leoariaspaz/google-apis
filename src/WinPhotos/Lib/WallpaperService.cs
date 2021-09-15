@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace WinPhotos.Lib
 {
-    public sealed class Wallpaper
+    public sealed class WallpaperService
     {
         const int SPI_SETDESKWALLPAPER = 20;
         const int SPIF_UPDATEINIFILE = 0x01;

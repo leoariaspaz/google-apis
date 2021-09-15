@@ -26,7 +26,7 @@ namespace WinPhotos
             InitializeComponent();
         }
 
-        private void salirToolStripMenuItem_Click(object sender, EventArgs e)
+        private void SalirToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Close();
             Application.Exit();
@@ -39,13 +39,13 @@ namespace WinPhotos
             Procesar();
         }
 
-        private async Task Procesar()
+        private void Procesar()
         {
-            (bool descarga, List<String> ids) = await new ChangeWallpaperController().DescargarListaFotos();
+            (bool descarga, List<String> ids) = new ChangeWallpaperController().DescargarListaFotos();
             if (descarga) _idFotos = ids;
 
             CrearNuevoTokenDeRotacion();
-            Task.Run(async () => { await RotarFondosPantalla(); }, _globalToken.Token);
+            _ = Task.Run(async () => { await RotarFondosPantalla(); }, _globalToken.Token);
         }
 
         private async Task RotarFondosPantalla()
@@ -73,7 +73,7 @@ namespace WinPhotos
                 }
                 catch (TaskCanceledException)
                 {
-                    Log.Debug("Tarea cancelada.");
+                    Log.Debug("La rotación de fondos de pantalla ha sido cancelada.");
                     CrearNuevoTokenDeRotacion();
                 }
             }
@@ -89,39 +89,40 @@ namespace WinPhotos
             return tkn;
         }
 
-        private async void btnSeleccionarÁlbumes_Click(object sender, EventArgs e)
+        private async void BtnSeleccionarÁlbumes_Click(object sender, EventArgs e)
         {
             var ctrlr = new ConfigurationController();
-            clbÁlbumes.Items.Clear();
             var alb = from a in await ctrlr.ListarÁlbumes()
                       where !String.IsNullOrEmpty(a.Title)
                       orderby a.Title
-                      select new Álbum(a.Id, a.Title);
+                      select new ÁlbumViewModel(a.Id, a.Title);
+            clbÁlbumes.Items.Clear();
             clbÁlbumes.Items.AddRange(alb.ToArray());
             var ids = ctrlr.GetÁlbumesId();
             for (int i = 0; i < clbÁlbumes.Items.Count; i++)
             {
-                var item = (Álbum)clbÁlbumes.Items[i];
+                var item = (ÁlbumViewModel)clbÁlbumes.Items[i];
                 if (ids.Contains(item.Id))
                 {
                     clbÁlbumes.SetItemChecked(i, true);
                 }
             }
+
             Show();
             ShowInTaskbar = true;
         }
 
-        private void btnCancelar_Click(object sender, EventArgs e)
+        private void BtnCancelar_Click(object sender, EventArgs e)
         {
             Hide();
         }
 
         private void btnGrabar_Click(object sender, EventArgs e)
         {
-            var tmp = new List<Álbum>();
+            var tmp = new List<ÁlbumViewModel>();
             foreach (var item in clbÁlbumes.CheckedItems)
             {
-                tmp.Add((Álbum)item);
+                tmp.Add((ÁlbumViewModel)item);
             }
             new ConfigurationController().ActualizarÁlbumes(tmp);
             Hide();
@@ -133,21 +134,21 @@ namespace WinPhotos
             _globalToken.Cancel();
         }
 
-        private void btnSeleccionarNuevaImagen_Click(object sender, EventArgs e)
+        private void BtnSeleccionarNuevaImagen_Click(object sender, EventArgs e)
         {
             Log.Debug("Seleccionando una nueva imagen");
             _cancellationTokenSource.Cancel();
         }
 
-        private void btnSalirGoogle_Click(object sender, EventArgs e)
+        private void BtnSalirGoogle_Click(object sender, EventArgs e)
         {
             _globalToken.Cancel();
-            PhotosLibrary.CerrarSesiónUsuarioGoogle();
+            PhotosProxy.CerrarSesiónUsuarioGoogle();
             MessageBox.Show("Se cerró la sesión del usuario.", "Cerrar sesión", MessageBoxButtons.OK, MessageBoxIcon.Information);
             btnSeleccionarÁlbumes.PerformClick();
         }
 
-        private async void btnRecargarAlbumes_Click(object sender, EventArgs e)
+        private void BtnRecargarAlbumes_Click(object sender, EventArgs e)
         {
             _globalToken.Cancel();
             _idFotos.Clear();

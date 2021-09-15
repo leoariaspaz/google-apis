@@ -17,21 +17,21 @@ namespace WinPhotos.Controllers
     {
         public async Task<List<Album>> ListarÁlbumes()
         {
-            PhotosLibraryService _svc = null;
             var result = new List<Album>();
-            _svc = await PhotosLibrary.CrearServicio();
-            var albumsList = _svc.Albums.List();
+            var svc = await PhotosProxy.CrearServicio();
+            var albumsList = svc.Albums.List();
             do
             {
-                var photos = await albumsList.ExecuteAsync();
+                ListAlbumsResponse photos;
+                photos = await albumsList.ExecuteAsync();
                 if (photos.Albums == null) break;
-                result.AddRange(photos.Albums);                
-                albumsList.PageToken = photos.NextPageToken;                
+                result.AddRange(photos.Albums);
+                albumsList.PageToken = photos.NextPageToken;
             } while (!String.IsNullOrEmpty(albumsList.PageToken));
             return result;
         }
 
-        public void ActualizarÁlbumes(List<Álbum> álbumes)
+        public void ActualizarÁlbumes(List<ÁlbumViewModel> álbumes)
         {
             MySettings settings = MySettings.Load();
             try
