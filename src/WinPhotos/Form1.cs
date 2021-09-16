@@ -64,7 +64,7 @@ namespace WinPhotos
                         async () =>
                         {
                             await new ChangeWallpaperController().ChangeWallpaper(_idFotos);
-                            await Task.Delay(TimeSpan.FromSeconds(delay), tkn);
+                            await Task.Delay(TimeSpan.FromMinutes(delay), tkn);
                         },
                         tkn
                     );
