@@ -140,7 +140,7 @@
             this.btnGrabar.TabIndex = 0;
             this.btnGrabar.Text = "Grabar";
             this.btnGrabar.UseVisualStyleBackColor = true;
-            this.btnGrabar.Click += new System.EventHandler(this.btnGrabar_Click);
+            this.btnGrabar.Click += new System.EventHandler(this.BtnGrabar_Click);
             // 
             // btnCancelar
             // 

@@ -19,8 +19,7 @@ namespace WinPhotos
     {
         private static readonly log4net.ILog Log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         private List<string> _idFotos;
-        private CancellationTokenSource _cancellationTokenSource;
-        private CancellationTokenSource _globalToken = new CancellationTokenSource();
+        private CancellationTokenSource _cancelacionRotacionTokenSource;
 
         public Form1()
         {
@@ -38,57 +37,52 @@ namespace WinPhotos
             ShowInTaskbar = false;
             Hide();
             await new PhotosProxy().CrearServicio();
-            Procesar();
+            Procesar(true);
         }
 
-        private async void Procesar()
+        private async void Procesar(bool descargar)
         {
-            (bool descarga, List<String> ids) = await new ChangeWallpaperController().DescargarListaFotos();
-            if (descarga) _idFotos = ids;
+            if (descargar)
+            {
+                (var haDescargado, List<string> ids) = await new ChangeWallpaperController().DescargarListaFotos();
+                if (haDescargado) _idFotos = ids;
+            }
 
-            CrearNuevoTokenDeRotacion();
-            _ = Task.Run(async () => { await RotarFondosPantalla(); }, _globalToken.Token);
+            await Task.Run(async () => { await RotarFondosPantalla(); });
         }
 
         private async Task RotarFondosPantalla()
         {
-            var sleepTime = Convert.ToInt32(ConfigurationManager.AppSettings["SleepTime"]);
-            while (true)
+            if (!_idFotos.Any()) return;
+            try
             {
-                try
+                var tkn = CrearNuevoTokenDeRotacion();
+                while (true)
                 {
-                    var tkn = _cancellationTokenSource.Token;
-
+                    var delay = Convert.ToInt32(ConfigurationManager.AppSettings["SleepTime"]);
                     await Task.Run(
-                        async () => { await new ChangeWallpaperController().ChangeWallpaper(_idFotos); },
-                        tkn
-                    );
-
-                    if (tkn.IsCancellationRequested)
-                    {
-                        tkn = CrearNuevoTokenDeRotacion();
-                    }
-
-                    await Task.Delay(
-                        TimeSpan.FromMinutes(sleepTime),
+                        async () =>
+                        {
+                            await new ChangeWallpaperController().ChangeWallpaper(_idFotos);
+                            await Task.Delay(TimeSpan.FromSeconds(delay), tkn);
+                        },
                         tkn
                     );
                 }
-                catch (TaskCanceledException)
-                {
-                    Log.Debug("La rotación de fondos de pantalla ha sido cancelada.");
-                    CrearNuevoTokenDeRotacion();
-                }
+            }
+            catch (TaskCanceledException)
+            {
+                Log.Debug("La rotación de fondos de pantalla ha sido cancelada.");
             }
         }
 
         private CancellationToken CrearNuevoTokenDeRotacion()
         {
             CancellationToken tkn;
-            if (_cancellationTokenSource != null)
-                _cancellationTokenSource.Dispose();
-            _cancellationTokenSource = new CancellationTokenSource();
-            tkn = _cancellationTokenSource.Token;
+            if (_cancelacionRotacionTokenSource != null)
+                _cancelacionRotacionTokenSource.Dispose();
+            _cancelacionRotacionTokenSource = new CancellationTokenSource();
+            tkn = _cancelacionRotacionTokenSource.Token;
             return tkn;
         }
 
@@ -120,7 +114,7 @@ namespace WinPhotos
             Hide();
         }
 
-        private void btnGrabar_Click(object sender, EventArgs e)
+        private void BtnGrabar_Click(object sender, EventArgs e)
         {
             var tmp = new List<ÁlbumViewModel>();
             foreach (var item in clbÁlbumes.CheckedItems)
@@ -134,18 +128,18 @@ namespace WinPhotos
 
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            _globalToken.Cancel();
+            _cancelacionRotacionTokenSource.Cancel();
         }
 
         private void BtnSeleccionarNuevaImagen_Click(object sender, EventArgs e)
         {
-            Log.Debug("Seleccionando una nueva imagen");
-            _cancellationTokenSource.Cancel();
+            _cancelacionRotacionTokenSource.Cancel(true);
+            Procesar(false);
         }
 
         private void BtnSalirGoogle_Click(object sender, EventArgs e)
         {
-            _globalToken.Cancel();
+            _cancelacionRotacionTokenSource.Cancel();
             new PhotosProxy().CerrarSesiónUsuarioGoogle();
             MessageBox.Show("Se cerró la sesión del usuario.", "Cerrar sesión", MessageBoxButtons.OK, MessageBoxIcon.Information);
             btnSeleccionarÁlbumes.PerformClick();
@@ -153,9 +147,9 @@ namespace WinPhotos
 
         private void BtnRecargarAlbumes_Click(object sender, EventArgs e)
         {
-            _globalToken.Cancel();
+            _cancelacionRotacionTokenSource.Cancel(true);
             _idFotos.Clear();
-            Procesar();
+            Procesar(true);
         }
     }
 }

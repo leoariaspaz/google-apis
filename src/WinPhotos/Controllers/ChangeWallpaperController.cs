@@ -19,6 +19,10 @@ namespace WinPhotos.Controllers
 
         internal async Task<bool> ChangeWallpaper(List<String> fotos)
         {
+            if (!fotos.Any())
+            {
+                return false;
+            }
             bool result = false;
             try
             {
@@ -62,8 +66,7 @@ namespace WinPhotos.Controllers
                 var svc = new PhotosProxy();
                 var tasks = settings.Albums.Select(async album => await DescargarAlbum(album, ids, svc));
                 await Task.WhenAll(tasks);
-                //Parallel.ForEach(settings.Albums, async (album) => await DescargarAlbum(album, ids, svc));
-                Log.DebugFormat("Se cargaron {0} fotos de {1} álbums", ids.Count, settings.Albums.Count);
+                Log.DebugFormat("Se descargaron ids de {0} fotos de {1} álbums", ids.Count, settings.Albums.Count);
                 return (true, ids);
             }
         }
