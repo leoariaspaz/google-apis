@@ -151,5 +151,19 @@ namespace WinPhotos
             _idFotos.Clear();
             Procesar(true);
         }
+
+        private void BtnDetenerTransiciones_Click(object sender, EventArgs e)
+        {
+            _cancelacionRotacionTokenSource.Cancel(true);
+            btnDetenerTransiciones.Enabled = false;
+            btnReactivarTransiciones.Enabled = true;
+        }
+
+        private void BtnReactivarTransiciones_Click(object sender, EventArgs e)
+        {
+            Procesar(false);
+            btnDetenerTransiciones.Enabled = true;
+            btnReactivarTransiciones.Enabled = false;
+        }
     }
 }

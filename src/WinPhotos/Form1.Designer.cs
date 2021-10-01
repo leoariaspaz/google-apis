@@ -1,4 +1,6 @@
-﻿namespace WinPhotos
+﻿using System;
+
+namespace WinPhotos
 {
     partial class Form1
     {
@@ -46,6 +48,9 @@
             this.clbÁlbumes = new System.Windows.Forms.CheckedListBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+            this.btnDetenerTransiciones = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnReactivarTransiciones = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -67,12 +72,15 @@
             this.btnSeleccionarÁlbumes,
             this.btnSeleccionarNuevaImagen,
             this.btnRecargarAlbumes,
+            this.toolStripSeparator3,
+            this.btnDetenerTransiciones,
+            this.btnReactivarTransiciones,
             this.toolStripSeparator2,
             this.btnSalirGoogle,
             this.toolStripSeparator1,
             this.salirToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(339, 209);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(339, 279);
             // 
             // btnSeleccionarÁlbumes
             // 
@@ -176,6 +184,26 @@
             this.clbÁlbumes.Size = new System.Drawing.Size(658, 249);
             this.clbÁlbumes.TabIndex = 2;
             // 
+            // toolStripSeparator3
+            // 
+            this.toolStripSeparator3.Name = "toolStripSeparator3";
+            this.toolStripSeparator3.Size = new System.Drawing.Size(335, 6);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.btnDetenerTransiciones.Name = "toolStripMenuItem1";
+            this.btnDetenerTransiciones.Size = new System.Drawing.Size(338, 32);
+            this.btnDetenerTransiciones.Text = "Detener transiciones";
+            this.btnDetenerTransiciones.Click += new System.EventHandler(this.BtnDetenerTransiciones_Click);
+            // 
+            // toolStripMenuItem2
+            // 
+            this.btnReactivarTransiciones.Name = "toolStripMenuItem2";
+            this.btnReactivarTransiciones.Size = new System.Drawing.Size(338, 32);
+            this.btnReactivarTransiciones.Text = "Reactivar transiciones";
+            this.btnReactivarTransiciones.Enabled = false;
+            this.btnReactivarTransiciones.Click += new System.EventHandler(this.BtnReactivarTransiciones_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -194,9 +222,7 @@
             this.panel1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
-
         }
-
         #endregion
 
         private System.Windows.Forms.NotifyIcon notifyIcon1;
@@ -215,6 +241,9 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
         private System.Windows.Forms.ToolStripMenuItem btnSalirGoogle;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
+        private System.Windows.Forms.ToolStripMenuItem btnReactivarTransiciones;
+        private System.Windows.Forms.ToolStripMenuItem btnDetenerTransiciones;
     }
 }
 
